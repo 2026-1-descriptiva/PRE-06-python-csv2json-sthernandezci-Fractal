@@ -1,27 +1,44 @@
-# Configuración en MacOS y Linux
+"""Script para convertir un archivo CSV a JSON"""
 
-Ejecute los siguientes comandos en el terminal:
+import csv
+import json
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-source setup.sh
-```
+from nicegui import ui
 
-# Configuración en Windows
 
-Ejecute los siguientes comandos en el terminal:
+def convert_csv_2_json(input_file):
+    """Converts a CSV file to a JSON file"""
 
-```bash
-python3 -m venv .venv
-.venv\Scripts\activate
-setup
-```
+    output_file = input_file.replace(".csv", ".json")
+    data = []
 
-# Ejecución de pruebas
+    with open(input_file, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            data.append(row)
 
-Ejecute el siguiente comando en el terminal:
+    with open(output_file, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4)
 
-```bash
-pytest
-```
+    ui.notify("The file was transformed successfully!")
+
+
+def app():
+    """Main function to run the app"""
+
+    ui.label("CSV to JSON Converter").classes("text-4xl font-bold")
+    ui.label("")
+
+    filename = ui.input(
+        label="CSV file to convert:",
+        placeholder="filename",
+    )
+
+    ui.label("")
+
+    ui.label("")
+    ui.button("Convert", on_click=lambda: convert_csv_2_json(filename.value))
+    ui.run()
+
+
+app()
